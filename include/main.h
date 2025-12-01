@@ -1,6 +1,9 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#define OP_LINUX//设置平台
+// #define OP_WINDOWS
+
 #define TIME_HARD 20 //总限时
 #define PER_HARD 1 //刷新间隔
 
