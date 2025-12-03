@@ -3,13 +3,8 @@ int main(){
     // 初始化程序（设置参数）
     int timelimit=TIME_SIMPLE,per=PER_SIMPLE;
     while (1) {
-#ifdef OP_LINUX
-        system("clear");
-#endif
-#ifdef OP_WINDOWS
-        system("cls");
-#endif
-        printf(" 股票交易模拟器小游戏\n\n 「1」开始游戏\n 「2」查看游玩历史\n 「3」难度选择\n 「q」退出\n");
+        CLEAR();
+        printf("    ┌────────────────────┐\n┌───│股票交易模拟器小游戏│───┐\n│   └────────────────────┘   │\n│  「1」开始游戏             │\n│  「2」查看游玩历史         │\n│  「3」难度选择             │\n│  「q」退出                 │\n└────────────────────────────┘\n");
         switch (getchar()) {
             case '1':
                 game(timelimit,per);//进入游戏
@@ -30,8 +25,9 @@ int main(){
 }
 
 void hardchange(int *t,int *p){//调难度界面
+    CLEAR();
     getchar();
-    printf("\n 难度选择:\n\n 「1」简单(9s间隔)\n 「2」一般(3s间隔)\n 「3」困难(1s间隔)\n 「4」自定义\n 「其他按键」返回\n");
+    printf("    ┌────────────────────┐\n┌───│      难度选择      │───┐\n│   └────────────────────┘   │\n│  「1」简单(9s间隔)         │\n│  「2」一般(3s间隔)         │\n│  「3」困难(1s间隔)         │\n│  「4」自定义               │\n│  「其他按键」返回          │\n└────────────────────────────┘\n");
     switch (getchar()) {
         case '1':
             *t=TIME_EASY,*p=PER_EASY;
