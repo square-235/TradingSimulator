@@ -15,6 +15,8 @@
 // 定位光标
 #define MOVETO(x,y) printf("\033[%d;%dH", (x), (y))
 
+#define CLEAR_LINE() printf("\033[K")
+
 #define TIME_HARD 20 //总限时
 #define PER_HARD 1 //刷新间隔
 
