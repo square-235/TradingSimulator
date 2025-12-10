@@ -1,1 +1,1 @@
-gcc ./src/* -o ./out/game
+gcc ./src/*.c -o ./out/game
