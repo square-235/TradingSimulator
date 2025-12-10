@@ -1,4 +1,7 @@
 #include "../include/main.h"
+#include <stdio.h>
+#include <stdlib.h>
+
 int main(){
     // 初始化程序（设置参数）
     int timelimit=TIME_SIMPLE,per=PER_SIMPLE;

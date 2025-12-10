@@ -1,9 +1,9 @@
 #include "../include/main.h"
+#include "../include/game.h"
 #include <bits/types/struct_timeval.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/select.h>
-#include "../include/game.h"
 
 void update_ui(int resTime,int resPer,int money,int debt,int TotalUnpaidShares){//游戏界面更新
     /*
@@ -25,26 +25,22 @@ void game(int timelimit,int per){
     int TotalUnpaidShares = 0;//总欠股票价值计数
     //股票结构体还没有准备好
 
-    //将使用select函数实现输入同时计时,相关声明和初始化：
+    //将使用select函数实现输入同时计时,相关声明：
     char u;//输入变量
     fd_set set;
     struct timeval timeout;
-    timeout.tv_sec = 1;timeout.tv_usec = 0;//1s刷新界面
-    FD_ZERO(&set);
-    FD_SET(0,&set);//0指代的是输入缓冲区
 
     while (1) {
         update_ui(resTime,resPer,money,debt,TotalUnpaidShares);//参数还没准备完成(还差股票链表)
-
+        FD_ZERO(&set);
+        FD_SET(0,&set);//0指代的是输入缓冲区
+        timeout.tv_sec = 1;timeout.tv_usec = 0;//1s刷新界面
 //将使用select函数实现输入同时计时
         int is_stdin = select(1,&set,NULL,NULL,&timeout);
-        if (is_stdin == 0) {//无输入
-            printf("\n无输入");
-        }
-        else {
+        if (is_stdin != 0) {
             //处理输入
-            scanf("%c",&u);
-            printf("\n%c",u);
+            u=getchar();
+            //还没写
         }
         resTime--;resPer--;
         if(resPer == 0){

@@ -26,9 +26,6 @@
 #define TIME_EASY 180
 #define PER_EASY 9
 
-#include <stdio.h>
-#include <stdlib.h>
-
 void game(int timelimit,int per);
 void hardchange(int *t,int *q);
 
