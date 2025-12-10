@@ -85,11 +85,25 @@ typedef struct{
                     //  }
                     break;
                 case '3':
-                    printf("\n输入借款金额:");
+                    printf("\n输入借款金额(输入负数来还款):");
                     scanf("%d",&num_input);
-                        //
+                    if (money+num_input<0) {
+                        printf("\n现金不足，无法还款");
+                        fflush(stdout);
+                        sleep(1);
+                    }
+                    else if (debt+num_input<0) {
+                        printf("\n输入金额大于欠款，失败");
+                        fflush(stdout);
+                        sleep(1);
+                    }
+                    else {
+                        money+=num_input;
+                       debt+=num_input;                    
+                    }
                     break;
                 case '4':
+                
                     break;
                 case '5':
                     break;
