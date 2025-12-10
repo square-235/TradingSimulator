@@ -23,8 +23,18 @@ void game(int timelimit,int per){
     int money = 1000;//初始余额1000
     int debt = 0;//欠款，每次刷新利率1%
     int TotalUnpaidShares = 0;//总欠股票价值计数
-    //股票结构体还没有准备好
 
+    //股票结构体还没有准备好
+typedef struct{
+    double current_price;//当前价
+    int code;//ID
+    int have_volumn;//持有量
+    double have_value;//持有价值
+    int owe_volumn;//欠有量
+    double owe_value;//欠有价值
+}Stock;
+    Stock pool[5];
+    
     //将使用select函数实现输入同时计时,相关声明：
     char u;//输入变量
     fd_set set;
