@@ -1,0 +1,75 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+typedef struct{
+    double current_price;//当前价
+    int code;//ID
+    int have_volumn;//持有量
+    double have_value;//持有价值
+    int owe_volumn;//欠有量
+    double owe_value;//欠有价值
+}Stock;
+Stock pool[10000];
+void seed(){
+    srand((unsigned int)time(NULL));//初始化种子
+    for(int i=0;i<10000;i++){
+        pool[i].code=10001+i;
+        pool[i].current_price=(rand()%9000+1000)/100.0;
+        pool[i].have_volumn=0;
+        pool[i].owe_volumn=0;
+        pool[i].have_value=0.0;
+        pool[i].owe_value=0.0;
+    }
+}
+void update_price(){//更新价格
+    for(int i=0;i<10000;i++){
+        double change_rate=(rand()%100-50)/1000.0;//涨跌幅
+        double new_price=pool[i].current_price*(1+change_rate);
+        if(new_price<1.0){
+            new_price=1.0;
+        }
+        pool[i].current_price=(float)((int)(new_price*100+0.5))/100.0;
+        pool[i].have_value=pool[i].have_volumn*pool[i].current_price;
+    }
+}
+int total_owe_volumn(){//总欠有股票数
+    int total=0;
+    for(int i=0;i<10000;i++){
+        total+=pool[i].owe_volumn;
+    }
+    return total;
+}
+int total_have_volumn(){//总拥有股票数
+    int total_=0;
+    for(int i=0;i<10000;i++){
+        total_+=pool[i].have_volumn;
+    }
+    return total_;
+}
+char current_date[12]="2025-12-01";//起止时间
+void time(){//更新时间
+   int year,month,day;
+   scanf(current_date,"%d-%d-%d",&year,&month,&day);
+   int days_in_month;
+   if(month==2){
+    if((year%4==0&&year%100!=0)||(year%400==0)){
+        days_in_month=29;
+    }else{
+        days_in_month=28;
+    }
+   } else if(month==4||month==6||month==9||month==11){
+    days_in_month=30;
+   }else{
+    days_in_month=31;
+   }
+   day++;
+   if(day>days_in_month){
+    day=1;
+    month++;
+    if(month>12){
+        month=1;
+        year++;
+    }
+   }
+   printf(current_date,"%d-%02d-%02d",year,month,day);
+}
