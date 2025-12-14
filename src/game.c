@@ -106,6 +106,57 @@ typedef struct{
                 
                     break;
                 case '5':
+                    {
+                        int job_earned=0;
+                        int job_questions=10;
+                        int i;
+                        int seed=money+debt+resTime;
+                        srand(seed);
+                        for(i=0;i<job_questions;i++){
+                            int num1,num2,correctAnswer;
+                            char op;
+                            num1=rand()%200+1;
+                            num2=rand()%200+1;
+                            int op_type=rand()%3+1;
+                            if(op_type==1){
+                                op='+';
+                                correctAnswer=num1+num2;
+                                    }
+                            else if(op_type==2){
+                                op='-';
+                                if(num1,num2){
+                                    int a=num1;
+                                    num1=num2;
+                                    num2=a;
+                                }
+                                correctAnswer=num1-num2;
+                            }
+                            else if(op_type==3){
+                                op='x';
+                                num1=rand()%20+1;
+                                num2=rand()%20+1 ;  
+                                correctAnswer=num1*num2;
+                            }
+                            printf("\n第%d题:%d%c%d=",i+1,num1,op,num2);
+                            fflush(stdout);
+                            int userAnswer;
+                            scanf("%d",&userAnswer);
+                            while(getchar()!='\n');
+                            if(userAnswer=correctAnswer){
+                                printf("答对了!+100元\n");
+                                job_earned+=100;
+                            }
+                            else if{
+                                printf("答错了!答案是:%d\n",correctAnswer);
+                            }
+                            fflush(stdout);
+                        }
+                        money+=job_earned;
+                        printf("\n打工结束,获得%元\n",job_earned);
+                        printf("按回车键继续");
+                        fflush(stdout);
+                        getchar();
+                    }
                     break;
                 case 'q':
                     break;
