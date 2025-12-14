@@ -1,6 +1,6 @@
 #include <stdio.h>
 typedef struct {
-    float price;  // 股票当前单价
+    float price;  // 股票单价
 } Stock;
 
 typedef struct {
