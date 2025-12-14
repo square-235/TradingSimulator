@@ -47,7 +47,7 @@ int sellStock(Account *acc, int sell_amount) {
         return 2;
     }
 
-    // 抛售操
+    // 抛售
     float total_income = sell_amount * acc->stock.price;
     acc->cash += total_income; 
     acc->hold -= sell_amount;  
