@@ -103,7 +103,40 @@ typedef struct{
                     }
                     break;
                 case '4':
-                
+                    {
+                        int stock_id,borrow_num;
+                        printf("\n可借的股票\n");
+                        for(int i=0;i<5;i++){
+                            printf("股票%d-价格:%.2f 已欠:%d股\n",i,stock_price[i],stock_owe_num[i]);
+                        }
+                        printf("\n输入要借的股票id(0-4):");
+                        scanf("%d",&stock_id);
+                        while(getchar()!='\n');
+                        if(stock_id<0||stock_id>4){
+                            printf("输入id错误\n");
+                            fflush(stdout);
+                            sleep(1);
+                        }
+                        printf("输入借股票的数量:");
+                        scanf("%d",&borrow_num);
+                        while(getchar()!='\n');
+                        if(borrow_num<=0){
+                            printf("输入数量错误\n");
+                            fflush(stdout);
+                            sleep(1);
+                        }
+                        double borrow_value=stock_price[stock_id]*borrow_num;
+                        stock_owe_num[stock_id]+=borrow_num;
+                        stock_owe_value[stock_id]+=borrow_value;
+                        TotalUnpaidShares+=borrow_value;
+                        printf("\n借入完成\n");
+                        printf("股票%d:借了d股,价值%.2f元\n",stock_id,borrow_num,borrow_value);
+                        printf("该股票累计欠%d股,价值%.2f元\n",stock_owe_num[stock_id],stock_owe_value[stock_id]);
+                        printf("总欠股价值:%.2f元\n",TotalUnpaidShares);
+                        printf("按回车键继续");
+                        fflush(stdout);
+                        getchar();
+                    }
                     break;
                 case '5':
                     {
