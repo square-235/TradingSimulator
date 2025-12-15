@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <sys/select.h>
 #include <unistd.h>
+#include <time.h>
+#include <stdlib.h>
 void update_ui(int resTime,int resPer,int money,int debt,int TotalUnpaidShares,Stock *pool){//游戏界面更新
     /*
      * 游戏界面
@@ -13,7 +15,7 @@ void update_ui(int resTime,int resPer,int money,int debt,int TotalUnpaidShares,S
     MOVETO(0,0);
     printf("    ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐\n┌───│正在交易 剩余时间：%3ds 下次刷新：%3ds 当前余额:%7d 总资产:%7d 欠款:%7d 欠股票:%7d│───┐\n│   └──────────────────────────────────────────────────────────────────────────────────────────────────┘   │\n",        resTime,resPer,money,money-debt-TotalUnpaidShares,debt,TotalUnpaidShares);
     for (int i=0;i<5;i++) {
-        printf("│    id:%d 当前单价：%.2f 持有数量:%4d 持有价值:%7d 欠数量:%4d 欠价值:%7d                   │\n",pool[i].code,pool[i].current_price,pool[i].have_volumn,pool[i].have_value,pool[i].owe_volumn,pool[i].owe_value);
+        printf("│    id:%d 当前单价：%3.2f 持有数量:%4d 持有价值:%7d 欠数量:%4d 欠价值:%7d                   │\n",pool[i].code,pool[i].current_price,pool[i].have_volumn,pool[i].have_value,pool[i].owe_volumn,pool[i].owe_value);
     }
     printf("\n└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘\n");
     printf("可用操作：「1」买入 「2」卖出 「3」借款 「4」借股票 「5」打工 「q」提前结算 「Ctrl+C」退出程序\n");
@@ -31,7 +33,9 @@ void game(int timelimit,int per){
     int num_input;
 
     Stock pool[5];
+            srand(time(NULL));
     for(int i=0;i<5;i++){
+
         pool[i].code=1+i;
         pool[i].current_price=(rand()%9000+1000)/100.0;
         pool[i].have_volumn=0;
@@ -39,14 +43,13 @@ void game(int timelimit,int per){
         pool[i].have_value=0;
         pool[i].owe_value=0;
     }
-}
     //将使用select函数实现输入同时计时,相关声明：
     char u;//输入变量
     fd_set set;
     struct timeval timeout;
 
     while (1) {
-        update_ui(resTime,resPer,money,debt,TotalUnpaidShares,&pool[5]);//参数还没准备完成(还差股票链表)
+        update_ui(resTime,resPer,money,debt,TotalUnpaidShares,&pool[0]);//参数还没准备完成(还差股票链表)
         FD_ZERO(&set);
         FD_SET(0,&set);//0指代的是输入缓冲区
         timeout.tv_sec = 1;timeout.tv_usec = 0;//1s刷新界面
