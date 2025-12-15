@@ -7,7 +7,7 @@ int job();
 
     //股票结构体
 typedef struct{
-    int current_price;//当前价
+    double current_price;//当前价
     int code;//ID
     int have_volumn;//持有量
     int have_value;//持有价值
