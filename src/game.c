@@ -31,7 +31,15 @@ void game(int timelimit,int per){
     int num_input;
 
     Stock pool[5];
-    
+    for(int i=0;i<5;i++){
+        pool[i].code=1+i;
+        pool[i].current_price=(rand()%9000+1000)/100.0;
+        pool[i].have_volumn=0;
+        pool[i].owe_volumn=0;
+        pool[i].have_value=0;
+        pool[i].owe_value=0;
+    }
+}
     //将使用select函数实现输入同时计时,相关声明：
     char u;//输入变量
     fd_set set;
