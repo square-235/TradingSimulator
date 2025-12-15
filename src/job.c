@@ -2,6 +2,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
+#include<unistd.h>
 int job(){
     fd_set set;
     struct timeval timeout;
@@ -50,9 +51,9 @@ int job(){
         printf("\n答错或超时!答案是:%d\n", correctAnswer);
       }
       fflush(stdout);
-    printf("打工结束，按回车键继续");
+    printf("打工结束，1s后继续");
     fflush(stdout);
-    getchar();
+    sleep(1);
 
     return job_earned;
 }

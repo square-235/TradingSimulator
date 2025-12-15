@@ -11,7 +11,7 @@ void game(int timelimit,int per){
     int resTime = timelimit,resPer = per;//剩余时间，下次刷新时间（重新计算价格的时间）
     int money = 1000;//初始余额1000
     int debt = 0;//欠款，每次刷新利率1%
-    int TotalUnpaidShares = 0;//总欠股票价值计数
+    int TotalUnpaidShares = 0;//总欠股票资产计数
     int id_input;
     int num_input;
 
@@ -32,6 +32,10 @@ void game(int timelimit,int per){
     struct timeval timeout;
 
     while (1) {
+        for(int i=0;i<5;i++){
+            pool[i].owe_value=pool[i].owe_volumn*pool[i].current_price;
+        }
+        TotalUnpaidShares=pool[0].owe_value+pool[1].owe_value+pool[2].owe_value+pool[3].owe_value+pool[4].owe_value;
         update_ui(resTime,resPer,money,debt,TotalUnpaidShares,&pool[0]);//更新界面
         FD_ZERO(&set);
         FD_SET(0,&set);//0指代的是输入缓冲区
@@ -106,7 +110,7 @@ void game(int timelimit,int per){
                 case '4':
                     {
                         int stock_id,borrow_num;
-                        printf("\n可借的股票\n");
+                        printf("\n可借的股票: (输入负数量来归还)\n");
                         for(int i=0;i<5;i++){
                             printf("股票%d-价格:%.2f 已欠:%d股\n",i,pool[i].current_price,pool[i].owe_volumn);
                         }
@@ -117,25 +121,24 @@ void game(int timelimit,int per){
                             printf("输入id错误\n");
                             fflush(stdout);
                             sleep(1);
+                            continue;
                         }
                         printf("输入借股票的数量:");
                         scanf("%d",&borrow_num);
                         while(getchar()!='\n');
-                        if(borrow_num<=0){
+                        if(borrow_num<-(int)pool[stock_id].owe_volumn){///归还数量不能大于已欠数量
                             printf("输入数量错误\n");
                             fflush(stdout);
                             sleep(1);
+                            continue;
                         }
                         int borrow_value=pool[stock_id].current_price*borrow_num;
                         pool[stock_id].owe_volumn+=borrow_num;
                         pool[stock_id].have_volumn+=borrow_num;
-                        pool[stock_id].owe_value+=borrow_value;
                         pool[stock_id].have_value+=borrow_value;
-                        TotalUnpaidShares+=borrow_value;
-                        printf("\n借入完成\n");
+                        printf("\n完成\n");
                         printf("股票%d:借了%d股,价值%d元\n",stock_id,borrow_num,borrow_value);
-                        printf("该股票累计欠%d股,价值%d元\n",pool[stock_id].owe_volumn,pool[stock_id].owe_value);
-                        printf("总欠股价值:%d元\n",TotalUnpaidShares);
+                        printf("该股票累计欠%d股\n",pool[stock_id].owe_volumn);
                         printf("按回车键继续");
                         fflush(stdout);
                         getchar();
@@ -167,11 +170,19 @@ void game(int timelimit,int per){
 
 }
         if(resTime == 0){
-            //结算（代码还没写）
+            //结算
             printf("游戏结束\n");
             printf("现金余额:%d元\n",money);
             printf("欠款+欠股票:%d元\n",debt+TotalUnpaidShares);
-            printf("最终总价值:%d元\n",money-debt+pool[0].have_value+pool[1].have_value+pool[2].have_value+pool[3].have_value+pool[4].have_value);
+            int final_value=money-debt+pool[0].have_value+pool[1].have_value+pool[2].have_value+pool[3].have_value+pool[4].have_value;//最终总资产(不含欠股票)
+            //还得还股票的价值
+            printf("最终总资产:%d元，减去初始的1000元，",final_value);
+            if (final_value-1000>0) {
+                printf("你获得了%d元的利润\n",final_value-1000);
+            }
+            else {
+                printf("你亏损了%d元\n",1000-final_value);
+            }
             sleep(10);
             return;
         }
