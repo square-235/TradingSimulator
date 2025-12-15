@@ -1,27 +1,10 @@
-#include "../include/main.h"
-#include "../include/game.h"
+#include "../include/header.h"
 #include <bits/types/struct_timeval.h>
 #include <stdio.h>
 #include <sys/select.h>
 #include <unistd.h>
 #include <time.h>
 #include <stdlib.h>
-void update_ui(int resTime,int resPer,int money,int debt,int TotalUnpaidShares,Stock *pool){//游戏界面更新
-    /*
-     * 游戏界面
-     * 定时更新主界面
-     */
-    CLEAR();
-    MOVETO(0,0);
-    printf("    ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐\n┌───│正在交易 剩余时间：%3ds 下次刷新：%3ds 当前余额:%7d 总资产:%7d 欠款:%7d 欠股票:%7d│───┐\n│   └──────────────────────────────────────────────────────────────────────────────────────────────────┘   │\n",        resTime,resPer,money,money-debt-TotalUnpaidShares,debt,TotalUnpaidShares);
-    for (int i=0;i<5;i++) {
-        printf("│    id:%d 当前单价：%3.2f 持有数量:%4d 持有价值:%7d 欠数量:%4d 欠价值:%7d                   │\n",pool[i].code,pool[i].current_price,pool[i].have_volumn,pool[i].have_value,pool[i].owe_volumn,pool[i].owe_value);
-    }
-    printf("\n└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘\n");
-    printf("可用操作：「1」买入 「2」卖出 「3」借款 「4」借股票 「5」打工 「q」提前结算 「Ctrl+C」退出程序\n");
-    printf("说明：一次输入一个字符，输入后按下回车生效 ");
-    fflush(stdout);//强制更新缓冲区
-}
 
 void game(int timelimit,int per){
     //初始化
@@ -49,7 +32,7 @@ void game(int timelimit,int per){
     struct timeval timeout;
 
     while (1) {
-        update_ui(resTime,resPer,money,debt,TotalUnpaidShares,&pool[0]);//参数还没准备完成(还差股票链表)
+        update_ui(resTime,resPer,money,debt,TotalUnpaidShares,&pool[0]);//更新界面
         FD_ZERO(&set);
         FD_SET(0,&set);//0指代的是输入缓冲区
         timeout.tv_sec = 1;timeout.tv_usec = 0;//1s刷新界面
@@ -70,7 +53,7 @@ void game(int timelimit,int per){
                     }
                     printf("\n输入买入数量：");
                     scanf("%d",&num_input);
-                    // if (/*价格*/*num_input>money) {
+                    if (num_input>money) {
                     //      printf("余额不足");
                     //      fflush(stdout);
                     //      sleep(1);
@@ -83,8 +66,15 @@ void game(int timelimit,int per){
                 case '2':
                     printf("\n输入要卖出的id:");
                     scanf("%d",&id_input);
+                    if (id_input<0 || id_input>5) {
+                        printf("\n输入id错误");
+                        fflush(stdout);
+                        sleep(1);
+                        continue;
+                    }
                     printf("\n输入卖出数量：");
                     scanf("%d",&num_input);
+                    
                     //  if (num_input>持有) {
                     //      printf("输入数量大于持有数量，失败");
                     //      fflush(stdout);
@@ -138,7 +128,9 @@ void game(int timelimit,int per){
                         }
                         int borrow_value=pool[stock_id].current_price*borrow_num;
                         pool[stock_id].owe_volumn+=borrow_num;
+                        pool[stock_id].have_volumn+=borrow_num;
                         pool[stock_id].owe_value+=borrow_value;
+                        pool[stock_id].have_value+=borrow_value;
                         TotalUnpaidShares+=borrow_value;
                         printf("\n借入完成\n");
                         printf("股票%d:借了%d股,价值%d元\n",stock_id,borrow_num,borrow_value);
@@ -179,7 +171,7 @@ void game(int timelimit,int per){
             printf("游戏结束\n");
             printf("现金余额:%d元\n",money);
             printf("欠款+欠股票:%d元\n",debt+TotalUnpaidShares);
-            printf("最终总价值:%d元\n",money-debt-TotalUnpaidShares);
+            printf("最终总价值:%d元\n",money-debt+pool[0].have_value+pool[1].have_value+pool[2].have_value+pool[3].have_value+pool[4].have_value);
             sleep(10);
             return;
         }
