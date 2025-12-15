@@ -11,7 +11,11 @@ void update_ui(int resTime,int resPer,int money,int debt,int TotalUnpaidShares,S
      */
     CLEAR();
     MOVETO(0,0);
-    printf("    ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐\n┌───│正在交易 剩余时间：%3ds 下次刷新：%3ds 当前余额:%7d 总资产:%7d 欠款:%7d 欠股票:%7d│───┐\n│   └──────────────────────────────────────────────────────────────────────────────────────────────────┘   │\n│    id:%d 当前单价：xxx.xx 持有数量:xxxxx 持有价值:xxxxxxx 欠数量:xxxxx 欠价值:xxxxxxx                   │\n│    id:%d 当前单价：xxx.xx 持有数量:xxxxx 持有价值:xxxxxxx 欠数量:xxxxx 欠价值:xxxxxxx                   │\n│    id:%d 当前单价：xxx.xx 持有数量:xxxxx 持有价值:xxxxxxx 欠数量:xxxxx 欠价值:xxxxxxx                   │\n│    id:%d 当前单价：xxx.xx 持有数量:xxxxx 持有价值:xxxxxxx 欠数量:xxxxx 欠价值:xxxxxxx                   │\n│    id:%d 当前单价：xxx.xx 持有数量:xxxxx 持有价值:xxxxxxx 欠数量:xxxxx 欠价值:xxxxxxx                   │\n└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘\n",resTime,resPer,money,money-debt-TotalUnpaidShares,debt,TotalUnpaidShares,pool[0].code,pool[1].code,pool[2].code,pool[3].code,pool[4].code);
+    printf("    ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐\n┌───│正在交易 剩余时间：%3ds 下次刷新：%3ds 当前余额:%7d 总资产:%7d 欠款:%7d 欠股票:%7d│───┐\n│   └──────────────────────────────────────────────────────────────────────────────────────────────────┘   │\n",        resTime,resPer,money,money-debt-TotalUnpaidShares,debt,TotalUnpaidShares);
+    for (int i=0;i<5;i++) {
+        printf("│    id:%d 当前单价：%.2f 持有数量:%4d 持有价值:%7d 欠数量:%4d 欠价值:%7d                   │\n",pool[i].code,pool[i].current_price,pool[i].have_volumn,pool[i].have_value,pool[i].owe_volumn,pool[i].owe_value);
+    }
+    printf("\n└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘\n");
     printf("可用操作：「1」买入 「2」卖出 「3」借款 「4」借股票 「5」打工 「q」提前结算 「Ctrl+C」退出程序\n");
     printf("说明：一次输入一个字符，输入后按下回车生效 ");
     fflush(stdout);//强制更新缓冲区
@@ -97,7 +101,7 @@ void game(int timelimit,int per){
                         int stock_id,borrow_num;
                         printf("\n可借的股票\n");
                         for(int i=0;i<5;i++){
-                            printf("股票%d-价格:%d 已欠:%d股\n",i,pool[i].current_price,pool[i].owe_volumn);
+                            printf("股票%d-价格:%.2f 已欠:%d股\n",i,pool[i].current_price,pool[i].owe_volumn);
                         }
                         printf("\n输入要借的股票id(0-4):");
                         scanf("%d",&stock_id);
