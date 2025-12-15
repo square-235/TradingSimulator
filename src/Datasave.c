@@ -1,20 +1,14 @@
+#include "../include/header.h"
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
-
-void parseFile (const char* filename);
-void saveCurrentGamedata();
-
-int main() {
-    parseFile ("./DATA/Test.txt"); // 解析游戏历史数据
-    saveCurrentGamedata();
-    return 0;
-}
+#include <time.h>
+#include <unistd.h>
 
 // 解析data文件
 void parseFile (const char* filename) {
-
+    getchar();
     // open the file
     FILE* fp = fopen(filename, "r");
     // 如果失败，输出失败原因
@@ -35,22 +29,35 @@ void parseFile (const char* filename) {
         // 跳过文件中注释 “#”
         if (buf[0] == '#')  continue;  
         // 输出文件读取到的数据
-        printf ("%s\n", buf);
+        printf ("%s", buf);
     }
-
-    // close the file
+    printf("\n按回车返回...");
+    getchar();
     fclose(fp);
 }
 
 // 保存游戏数据于continueGame.txt中
-void saveCurrentGamedata() {
+void saveCurrentGamedata(int final_value) {
     // 打开文件
-    FILE* fp = fopen("./DATA/continueGame.txt", "w");
+    FILE* fp = fopen("./data.txt", "a");//追加写入
     assert (fp != NULL);
 
-    // 书写保存数据文件的注释
-    fprintf(fp, "#中途退出的游戏数据\n");
+    // 书写保存数据文件
+    
+    //写入时间区分记录（方法来自网络）
+    time_t rawtime;
+    struct tm *info;
+    char buffer[80];
+    time(&rawtime);
+    info = localtime(&rawtime);
+    strftime(buffer, 80, "%Y/%m/%d %H:%M:%S ", info);//格式化时间
+    fprintf(fp, "%s", buffer);
 
-
+    // 写入数据
+    if (final_value>0) fprintf(fp, "盈利:%d元", final_value);
+    else if (final_value==0) fprintf(fp, "不赚不亏");
+    else fprintf(fp, "亏损:%d元", -final_value);
+    fprintf(fp, "\n");
+    
     fclose(fp);
 }

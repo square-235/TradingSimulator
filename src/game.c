@@ -107,8 +107,14 @@ void game(int timelimit,int per){
                     }
                     break;
                 case '3':
-                    printf("\n输入借款金额(每次刷新利率1%%，输入负数来还款):");
+                    printf("\n输入借款金额(每次刷新利率1%%，输入负数来还款,最大借款金额为1000):");
                     scanf("%d",&num_input);
+                    if (num_input>0 && num_input+debt>1000) {
+                        printf("\n输入金额大于最大借款金额，失败");
+                        fflush(stdout);
+                        sleep(1);
+                        continue;
+                    }
                     if (money+num_input<0) {
                         printf("\n现金不足，无法还款");
                         fflush(stdout);
@@ -195,17 +201,20 @@ void game(int timelimit,int per){
             int final_value=money-debt+pool[0].have_value+pool[1].have_value+pool[2].have_value+pool[3].have_value+pool[4].have_value;//最终总资产(不含欠股票)
             //还得还股票的价值
             printf("最终总资产:%d元，减去初始的10000元，",final_value);
-            if (final_value-10000>0) {
-                printf("你获得了%d元的利润\n",final_value-10000);
+            final_value-=10000;
+            if (final_value>0) {
+                printf("你获得了%d元的利润\n",final_value);
             }
-            else if (final_value-10000==0) {
+            else if (final_value==0) {
                 printf("你没有获得利润或亏损\n");
             }
             else {
-                printf("你亏损了%d元\n",10000-final_value);
+                printf("你亏损了%d元\n",-final_value);
             }
-            sleep(10);
             //存储游戏记录(未完成)
+            saveCurrentGamedata(final_value);
+            printf("记录已保存，10s后继续\n");
+            sleep(10);
             return;
         }
     }

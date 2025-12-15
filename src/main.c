@@ -15,7 +15,7 @@ int main(){
                 game(timelimit,per);//进入游戏
                 break;
             case '2':
-                exit(-10086);//还没写程序，用这行便于部分调试
+                parseFile("./data.txt");//读数据文件
                 break;
             case '3':
                 hardchange(&timelimit,&per);//设置：难易程度/限时，HARD/SIMPLE/EASY/SIMPLE三挡或自己输入

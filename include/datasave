@@ -1,7 +1,0 @@
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <assert.h>
-
-void parseFile(const char* filename);
-void saveCurrentGamedata();
