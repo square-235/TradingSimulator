@@ -61,7 +61,7 @@ void game(int timelimit,int per){
                     // else {
                             // money-=/*价格*/*num_input;
                     //     //写入持有数据
-                    // }
+                    }
                     break;
                 case '2':
                     printf("\n输入要卖出的id:");
