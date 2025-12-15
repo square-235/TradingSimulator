@@ -18,7 +18,7 @@ int job(){
         correctAnswer = num1 + num2;
       } else if (op_type == 2) {
         op = '-';
-        if (num1, num2) {
+        if (num1<num2) {
           int a = num1;
           num1 = num2;
           num2 = a;
