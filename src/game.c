@@ -9,7 +9,7 @@
 void update_ui(int resTime,int resPer,int money,int debt,int TotalUnpaidShares,Stock *pool){//游戏界面更新
     /*
      * 游戏界面
-     * 定时更新主界面（无论是否操作）
+     * 定时更新主界面
      */
     CLEAR();
     MOVETO(0,0);
@@ -62,6 +62,12 @@ void game(int timelimit,int per){
                 case '1':
                     printf("\n输入要买入的id:");
                     scanf("%d",&id_input);
+                    if (id_input<0 || id_input>5) {
+                        printf("\n输入id错误");
+                        fflush(stdout);
+                        sleep(1);
+                        continue;
+                    }
                     printf("\n输入买入数量：");
                     scanf("%d",&num_input);
                     // if (/*价格*/*num_input>money) {
@@ -147,6 +153,7 @@ void game(int timelimit,int per){
                     money+=job();
                     break;
                 case 'q':
+                    resTime=1;
                     break;
             }
         }
@@ -154,9 +161,16 @@ void game(int timelimit,int per){
         if(resPer == 0){
             resPer = per;
             //刷新和计算（代码还没写）
+            debt=debt*1.01;
+
         }
         if(resTime == 0){
             //结算（代码还没写）
+            printf("游戏结束\n");
+            printf("现金余额:%d元\n",money);
+            printf("欠款+欠股票:%d元\n",debt+TotalUnpaidShares);
+            printf("最终总价值:%d元\n",money-debt-TotalUnpaidShares);
+            sleep(10);
             return;
         }
     }
