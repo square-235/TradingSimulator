@@ -12,7 +12,7 @@ typedef struct{
 Stock pool[10000];
 void seed(){
     srand((unsigned int)time(NULL));//初始化种子
-    for(int i=0;i<10000;i++){
+    for(int i=0;i<5;i++){
         pool[i].code=10001+i;
         pool[i].current_price=(rand()%9000+1000)/100.0;
         pool[i].have_volumn=0;
@@ -22,7 +22,7 @@ void seed(){
     }
 }
 void update_price(){//更新价格
-    for(int i=0;i<10000;i++){
+    for(int i=0;i<5;i++){
         double change_rate=(rand()%100-50)/1000.0;//涨跌幅
         double new_price=pool[i].current_price*(1+change_rate);
         if(new_price<1.0){
@@ -34,14 +34,14 @@ void update_price(){//更新价格
 }
 int total_owe_volumn(){//总欠有股票数
     int total=0;
-    for(int i=0;i<10000;i++){
+    for(int i=0;i<5;i++){
         total+=pool[i].owe_volumn;
     }
     return total;
 }
 int total_have_volumn(){//总拥有股票数
     int total_=0;
-    for(int i=0;i<10000;i++){
+    for(int i=0;i<5;i++){
         total_+=pool[i].have_volumn;
     }
     return total_;

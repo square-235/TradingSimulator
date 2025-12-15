@@ -147,7 +147,18 @@ void game(int timelimit,int per){
         if(resPer == 0){
             resPer = per;
             //刷新和计算（代码还没写）
+void update_price(){//更新价格
+    for(int i=0;i<5;i++){
+        srand(time(NULL));
+        double change_rate=(rand()%100-50)/1000.0;//涨跌幅
+        double new_price=pool[i].current_price*(1+change_rate);
+        if(new_price<1.0){
+            new_price=1.0;
         }
+        pool[i].current_price=(float)((int)(new_price*100+0.5))/100.0;
+        pool[i].have_value=pool[i].have_volumn*pool[i].current_price;
+    }
+}
         if(resTime == 0){
             //结算（代码还没写）
             return;
