@@ -107,7 +107,7 @@ void game(int timelimit,int per){
                     }
                     break;
                 case '3':
-                    printf("\n输入借款金额(输入负数来还款):");
+                    printf("\n输入借款金额(每次刷新利率1%%，输入负数来还款):");
                     scanf("%d",&num_input);
                     if (money+num_input<0) {
                         printf("\n现金不足，无法还款");
@@ -121,7 +121,7 @@ void game(int timelimit,int per){
                     }
                     else {
                         money+=num_input;
-                       debt+=num_input;                    
+                        debt+=num_input;                    
                     }
                     break;
                 case '4':
@@ -163,10 +163,10 @@ void game(int timelimit,int per){
                     }
                     break;
                 case '5':
-                    money+=job();
+                    money+=job();//打工（单独拆分的模块）
                     break;
                 case 'q':
-                    resTime=1;
+                    resTime=1;//计时=1准备结算
                     break;
             }
         }
@@ -174,7 +174,7 @@ void game(int timelimit,int per){
         if(resPer == 0){
             resPer = per;
             //刷新和计算
-        for(int i=0;i<5;i++){
+        for(int i=0;i<5;i++){//随机刷新股票价格
             srand(time(NULL));
             double change_rate=(rand()%100-50)/1000.0;//涨跌幅
             double new_price=pool[i].current_price*(1+change_rate);
