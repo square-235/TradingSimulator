@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <sys/select.h>
 #include <unistd.h>
-
 void update_ui(int resTime,int resPer,int money,int debt,int TotalUnpaidShares){//游戏界面更新
     /*
      * 游戏界面
@@ -27,15 +26,6 @@ void game(int timelimit,int per){
     int id_input;
     int num_input;
 
-    //股票结构体
-typedef struct{
-    double current_price;//当前价
-    int code;//ID
-    int have_volumn;//持有量
-    double have_value;//持有价值
-    int owe_volumn;//欠有量
-    double owe_value;//欠有价值
-}Stock;
     Stock pool[5];
     
     //将使用select函数实现输入同时计时,相关声明：
@@ -107,7 +97,7 @@ typedef struct{
                         int stock_id,borrow_num;
                         printf("\n可借的股票\n");
                         for(int i=0;i<5;i++){
-                            printf("股票%d-价格:%.2f 已欠:%d股\n",i,stock_price[i],stock_owe_num[i]);
+                            printf("股票%d-价格:%d 已欠:%d股\n",i,pool[i].current_price,pool[i].owe_volumn);
                         }
                         printf("\n输入要借的股票id(0-4):");
                         scanf("%d",&stock_id);
@@ -125,71 +115,21 @@ typedef struct{
                             fflush(stdout);
                             sleep(1);
                         }
-                        double borrow_value=stock_price[stock_id]*borrow_num;
-                        stock_owe_num[stock_id]+=borrow_num;
-                        stock_owe_value[stock_id]+=borrow_value;
+                        int borrow_value=pool[stock_id].current_price*borrow_num;
+                        pool[stock_id].owe_volumn+=borrow_num;
+                        pool[stock_id].owe_value+=borrow_value;
                         TotalUnpaidShares+=borrow_value;
                         printf("\n借入完成\n");
-                        printf("股票%d:借了d股,价值%.2f元\n",stock_id,borrow_num,borrow_value);
-                        printf("该股票累计欠%d股,价值%.2f元\n",stock_owe_num[stock_id],stock_owe_value[stock_id]);
-                        printf("总欠股价值:%.2f元\n",TotalUnpaidShares);
+                        printf("股票%d:借了%d股,价值%d元\n",stock_id,borrow_num,borrow_value);
+                        printf("该股票累计欠%d股,价值%d元\n",pool[stock_id].owe_volumn,pool[stock_id].owe_value);
+                        printf("总欠股价值:%d元\n",TotalUnpaidShares);
                         printf("按回车键继续");
                         fflush(stdout);
                         getchar();
                     }
                     break;
                 case '5':
-                    {
-                        int job_earned=0;
-                        int job_questions=10;
-                        int i;
-                        int seed=money+debt+resTime;
-                        srand(seed);
-                        for(i=0;i<job_questions;i++){
-                            int num1,num2,correctAnswer;
-                            char op;
-                            num1=rand()%200+1;
-                            num2=rand()%200+1;
-                            int op_type=rand()%3+1;
-                            if(op_type==1){
-                                op='+';
-                                correctAnswer=num1+num2;
-                                    }
-                            else if(op_type==2){
-                                op='-';
-                                if(num1,num2){
-                                    int a=num1;
-                                    num1=num2;
-                                    num2=a;
-                                }
-                                correctAnswer=num1-num2;
-                            }
-                            else if(op_type==3){
-                                op='x';
-                                num1=rand()%20+1;
-                                num2=rand()%20+1 ;  
-                                correctAnswer=num1*num2;
-                            }
-                            printf("\n第%d题:%d%c%d=",i+1,num1,op,num2);
-                            fflush(stdout);
-                            int userAnswer;
-                            scanf("%d",&userAnswer);
-                            while(getchar()!='\n');
-                            if(userAnswer=correctAnswer){
-                                printf("答对了!+100元\n");
-                                job_earned+=100;
-                            }
-                            else if{
-                                printf("答错了!答案是:%d\n",correctAnswer);
-                            }
-                            fflush(stdout);
-                        }
-                        money+=job_earned;
-                        printf("\n打工结束,获得%元\n",job_earned);
-                        printf("按回车键继续");
-                        fflush(stdout);
-                        getchar();
-                    }
+                    money+=job();
                     break;
                 case 'q':
                     break;
