@@ -9,12 +9,13 @@ int main(){
         CLEAR();
         MOVETO(0,0);
         printf("    ┌────────────────────┐\n┌───│股票交易模拟器小游戏│───┐\n│   └────────────────────┘   │\n│  「1」开始游戏             │\n│  「2」查看游玩历史         │\n│  「3」难度选择             │\n│  「q」退出                 │\n└────────────────────────────┘\n");
+        printf("游戏说明：模拟真实股票交易环境，在限定时间赚取尽可能多的收入！\n输入菜单选项：");
         switch (getchar()) {
             case '1':
                 game(timelimit,per);//进入游戏
                 break;
             case '2':
-                exit(-10086);//还没写程序，用这行便于部分调试
+                parseFile("./data.txt");//读数据文件
                 break;
             case '3':
                 hardchange(&timelimit,&per);//设置：难易程度/限时，HARD/SIMPLE/EASY/SIMPLE三挡或自己输入

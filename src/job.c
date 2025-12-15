@@ -6,7 +6,7 @@
 int job(){
     fd_set set;
     struct timeval timeout;
-    printf("\n可回答1道数学题,答对得100元，限时5s，主游戏计时暂停\n");
+    printf("\n可回答1道数学题,答对得100元，限时5s\n");
     int job_earned = 0;
     srand(time(NULL));
       int num1, num2, correctAnswer;

@@ -34,4 +34,7 @@ typedef struct{
 }Stock;
 
 void update_ui(int resTime,int resPer,int money,int debt,int TotalUnpaidShares,Stock *pool);
+
+void parseFile(const char* filename);//解析data文件
+void saveCurrentGamedata(int final_value);//保存当前游戏数据
 #endif
