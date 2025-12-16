@@ -4,7 +4,7 @@
 #include <errno.h>
 #include <assert.h>
 #include <time.h>
-
+#include <stdlib.h>
 //结构体
 #define MAX_REC 100  
 // 最大记录数
@@ -19,19 +19,6 @@ typedef struct {
 static int getProfit(const char* s) {
     const char* p = strstr(s, "盈亏:");
     return p ? atoi(p+3) : 0;
-}
-
-// 冒泡排序
-static void bubbleSort(Rec recs[], int n) {
-    for (int i=0; i<n-1; i++)
-        for (int j=0; j<n-1-i; j++)
-            if (recs[j].profit < recs[j+1].profit)
-            // 降序交换
-             { 
-                Rec t = recs[j];
-                recs[j] = recs[j+1];
-                recs[j+1] = t;
-            }
 }
 
 // 解析data文件
@@ -65,25 +52,12 @@ void parseFile (const char* filename) {
         recs[rec_cnt++].profit = getProfit(buf);
     }
 
-   
-    char choice = 'q'; // 默认不排序
     if (rec_cnt > 0) {
-        printf("\n请选择操作：1-按盈亏降序排序  q-直接返回（不排序）：");
-        scanf("%c", &choice);
-        // 按1则执行排序
-        if (choice == '1') {
-            bubbleSort(recs, rec_cnt);
-            printf("\n===== 排序后的历史记录 =====\n");
-        } else {
-            printf("\n===== 原始历史记录 =====\n");
-        }
-        // 打印记录
         for (int i=0; i<rec_cnt; i++) printf("%s", recs[i].line);
     }
 
     printf("\n按回车返回...");
-    getchar(); /
-    getchar(); 
+    getchar();
     fclose(fp);
 }
 
