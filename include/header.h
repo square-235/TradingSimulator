@@ -21,7 +21,11 @@
 void game(int timelimit,int per);
 void hardchange(int *t,int *q);
 void update_price();
-int job();
+
+void borrow(double *money,double *debt,const int num_input);//借款
+int job();//打工
+#include <stdbool.h>
+bool autoInvest(double money,int auto_invest_amount,bool auto_invest);//智能投资
 
     //股票结构体
 typedef struct{

@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <time.h>
 #include <stdlib.h>
-
 void game(int timelimit,int per){
     //初始化
     int resTime = timelimit,resPer = per;//剩余时间，下次刷新时间（重新计算价格的时间）
@@ -15,7 +14,7 @@ void game(int timelimit,int per){
     int id_input;
     int num_input;
     //定义智能投资相关变量
-    int auto_invest = 0;//0关闭，1开启
+    bool auto_invest = false;
     int auto_invest_amount = 500;//每次智能投资的资金
     //创建结构体
     Stock pool[5];
@@ -128,51 +127,36 @@ void game(int timelimit,int per){
                     printf("\n输入借款金额(每次刷新利率1%%，输入负数来还款,最大借款金额为1000):");
                     scanf("%d",&num_input);
                     while(getchar()!='\n');
-                    if (num_input>0 && num_input+debt>1000) {
-                        printf("\n输入金额大于最大借款金额，失败");
-                        fflush(stdout);
-                        sleep(1);
-                        continue;
-                    }
-                    if (money+num_input<0) {
-                        printf("\n现金不足，无法还款");
-                        fflush(stdout);
-                        sleep(1);
-                    }
-                    else if (debt+num_input<0) {
-                        printf("\n输入金额大于欠款，失败");
-                        fflush(stdout);
-                        sleep(1);
-                    }
-                    else {
-                        money+=num_input;
-                        debt+=num_input;                    
-                    }
+                    borrow(&money,&debt,num_input);//借款操作函数
                     break;
                 case '4':
                     {
                         int stock_id,borrow_num;
+                        printf("\n做空：高价时借股票来卖，低价时买股票来还");
                         printf("\n可借的股票: (输入负数量来归还)\n");
                         for(int i=0;i<5;i++){
                             printf("股票%d-价格:%.2f 已欠:%d股\n",i+1,
                                 pool[i].current_price,pool[i].owe_volumn);
                         }
-                        printf("\n输入要借的股票id(1-5):");
+                        printf("\n输入要借的股票id(1-5,输0退出):");
                         scanf("%d",&stock_id);
                         stock_id--;
                         while(getchar()!='\n');
-                        if(stock_id<0||stock_id>4){
+                        if(stock_id==-1){
+                            continue;
+                        }
+                        else if(stock_id<-1||stock_id>4){
                             printf("输入id错误\n");
                             fflush(stdout);
                             sleep(1);
                             continue;
                         }
-                        printf("输入借股票的数量:");
+                        printf("输入借股票的数量:(最大1000股)");
                         scanf("%d",&borrow_num);
                         while(getchar()!='\n');
                         
                         //借股票
-                        if(borrow_num > 0){
+                        if(borrow_num > 0&&borrow_num<1000){
                             // 借入股票后立即卖出，获得现金
                             double sell_value = pool[stock_id].current_price * borrow_num;
                             money += sell_value; // 卖出股票获得现金
@@ -180,6 +164,12 @@ void game(int timelimit,int per){
                             printf("\n做空开仓成功！\n");
                             printf("股票%d:借入%d股并卖出，获得现金%.2f元\n",
                                 stock_id+1,borrow_num,sell_value);
+                        }
+                        else if (borrow_num>=1000) {
+                            printf("数量超过上限");
+                            fflush(stdout);
+                            sleep(1);
+                            continue;
                         }
                         // 还股票
                         else if(borrow_num < 0){
@@ -223,35 +213,7 @@ void game(int timelimit,int per){
                     money+=job();//打工（单独拆分的模块）
                     break;
                 case '6'://智能投资
-                    getchar();
-                    if (auto_invest == 0) {
-                        if (money >= auto_invest_amount) {
-                            printf("\n智能投资：每次刷新将自动把500元平均投入到5只股票（四舍五入）,资金不足自动关闭，无需手动操作，是否开启？(Y/n)");
-                            char confirm;
-                            scanf("%c",&confirm);
-                            if(confirm=='Y'||confirm=='\n'){
-                                auto_invest = 1;
-                                printf("\n智能投资已开启，");
-                            }
-                            else{
-                                printf("未进行更改，");
-                            }
-                        }else{
-                            printf("\n资金不足，无法开启，\n");
-                        }
-                    }else{
-                        printf("关闭智能投资？(Y/n)");
-                        char confirm;
-                        scanf("%c",&confirm);
-                        if(confirm=='Y'||confirm=='\n'){
-                            auto_invest = 0;
-                            printf("\n智能投资已关闭,");
-                        }
-                    }
-                    printf("按回车键继续......");
-                    sleep(1);
-                    fflush(stdout);
-                    getchar();
+                    auto_invest = autoInvest(money,auto_invest_amount,auto_invest);
                     break;
                 case 'q':
                     resTime=1;//计时=1以跳转到结算
@@ -261,7 +223,7 @@ void game(int timelimit,int per){
         resTime--;resPer--;
         if(resPer == 0){
             resPer = per;
-            if (auto_invest == 1) {//智能投资
+            if (auto_invest == true) {//智能投资
                 if (money >= auto_invest_amount) {//看资金够不够
                     int invest_per_stock = auto_invest_amount / 5;//均分资金
                     for (int i = 0; i < 5; i++) {
@@ -273,7 +235,7 @@ void game(int timelimit,int per){
                         }
                     }
                 }else{
-                    auto_invest = 0;//资金不足自动关闭智能投资
+                    auto_invest = false;//资金不足自动关闭智能投资
                 }
             }
             //刷新和计算
