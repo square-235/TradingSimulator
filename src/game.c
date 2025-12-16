@@ -1,4 +1,4 @@
-#include "../include/header.h"
+  #include "../include/header.h"
 #include <bits/types/struct_timeval.h>
 #include <stdio.h>
 #include <sys/select.h>
@@ -9,21 +9,21 @@
 void game(int timelimit,int per){
     //初始化
     int resTime = timelimit,resPer = per;//剩余时间，下次刷新时间（重新计算价格的时间）
-    int money = 10000;//初始余额10000
-    int debt = 0;//欠款，每次刷新利率1%
-    int TotalUnpaidShares = 0;//总欠股票资产计数
+    double money = 10000.0;//初始余额10000 
+    double debt = 0.0;//欠款，每次刷新利率1% 
+    double TotalUnpaidShares = 0.0;//总欠股票资产计数 
     int id_input;
     int num_input;
 
     Stock pool[5];
-        srand(time(NULL));
+    srand(time(NULL)); 
     for(int i=0;i<5;i++){
         pool[i].code=1+i;
         pool[i].current_price=(rand()%9000+1000)/100.0;
         pool[i].have_volumn=0;
         pool[i].owe_volumn=0;
-        pool[i].have_value=0;
-        pool[i].owe_value=0;
+        pool[i].have_value=0.0;
+        pool[i].owe_value=0.0;
     }
     //将使用select函数实现输入同时计时,相关声明：
     char u;//输入变量
@@ -48,6 +48,7 @@ void game(int timelimit,int per){
                 case '1'://买入
                     printf("\n输入要买入的id:");
                     scanf("%d",&id_input);
+                    while(getchar()!='\n');
                     id_input--;//将id转换为数组下标
                     if (id_input<0 || id_input>4) {
                         printf("\n输入id错误");
@@ -57,6 +58,7 @@ void game(int timelimit,int per){
                     }
                     printf("\n输入买入数量：");
                     scanf("%d",&num_input);
+                    while(getchar()!='\n');
                     if (num_input*pool[id_input].current_price>money) {
                         printf("余额不足");
                         fflush(stdout);
@@ -79,6 +81,7 @@ void game(int timelimit,int per){
                 case '2'://卖出
                     printf("\n输入要卖出的id:");
                     scanf("%d",&id_input);
+                    while(getchar()!='\n');
                     id_input--;//将id转换为数组下标
                     if (id_input<0 || id_input>4) {
                         printf("\n输入id错误");
@@ -88,6 +91,7 @@ void game(int timelimit,int per){
                     }
                     printf("\n输入卖出数量：");
                     scanf("%d",&num_input);
+                    while(getchar()!='\n');
                     if (num_input>pool[id_input].have_volumn) {
                         printf("输入数量大于持有数量，错误");
                         fflush(stdout);
@@ -109,6 +113,7 @@ void game(int timelimit,int per){
                 case '3':
                     printf("\n输入借款金额(每次刷新利率1%%，输入负数来还款,最大借款金额为1000):");
                     scanf("%d",&num_input);
+                    while(getchar()!='\n');
                     if (num_input>0 && num_input+debt>1000) {
                         printf("\n输入金额大于最大借款金额，失败");
                         fflush(stdout);
@@ -135,7 +140,8 @@ void game(int timelimit,int per){
                         int stock_id,borrow_num;
                         printf("\n可借的股票: (输入负数量来归还)\n");
                         for(int i=0;i<5;i++){
-                            printf("股票%d-价格:%.2f 已欠:%d股\n",i+1,pool[i].current_price,pool[i].owe_volumn);
+                            printf("股票%d-价格:%.2f 已欠:%d股\n",i+1,
+                                pool[i].current_price,pool[i].owe_volumn);
                         }
                         printf("\n输入要借的股票id(1-5):");
                         scanf("%d",&stock_id);
@@ -150,18 +156,49 @@ void game(int timelimit,int per){
                         printf("输入借股票的数量:");
                         scanf("%d",&borrow_num);
                         while(getchar()!='\n');
-                        if(borrow_num<-(int)pool[stock_id].owe_volumn){///归还数量不能大于已欠数量
-                            printf("输入数量错误\n");
+                        
+                        //借股票
+                        if(borrow_num > 0){
+                            // 借入股票后立即卖出，获得现金
+                            double sell_value = pool[stock_id].current_price * borrow_num;
+                            money += sell_value; // 卖出股票获得现金
+                            pool[stock_id].owe_volumn += borrow_num; // 记录欠的股票数量
+                            printf("\n做空开仓成功！\n");
+                            printf("股票%d:借入%d股并卖出，获得现金%.2f元\n",
+                                stock_id+1,borrow_num,sell_value);
+                        }
+                        // 还股票
+                        else if(borrow_num < 0){
+                            int return_num = -borrow_num; // 要归还的股票数量
+                            // 归还数量不能超过已欠数量
+                            if(return_num > pool[stock_id].owe_volumn){
+                                printf("归还数量大于已欠数量，输入错误\n");
+                                fflush(stdout);
+                                sleep(1);
+                                continue;
+                            }
+                            // 买入股票归还，消耗现金
+                            double buy_value = pool[stock_id].current_price * return_num;
+                            if(money < buy_value){
+                                printf("现金不足，无法买入股票归还！\n");
+                                fflush(stdout);
+                                sleep(1);
+                                continue;
+                            }
+                            money -= buy_value; // 买入股票消耗现金
+                            pool[stock_id].owe_volumn -= return_num; // 减少欠的股票数量
+                            printf("\n做空平仓成功！\n");
+                            printf("股票%d:买入%d股归还，消耗现金%.2f元\n",
+                                stock_id+1,return_num,buy_value);
+                        }
+                        // 输入0则无操作
+                        else{
+                            printf("输入数量为0，无操作\n");
                             fflush(stdout);
                             sleep(1);
                             continue;
                         }
-                        int borrow_value=pool[stock_id].current_price*borrow_num;
-                        pool[stock_id].owe_volumn+=borrow_num;
-                        pool[stock_id].have_volumn+=borrow_num;
-                        pool[stock_id].have_value+=borrow_value;
-                        printf("\n完成\n");
-                        printf("股票%d:借了%d股,价值%d元\n",stock_id,borrow_num,borrow_value);
+                        
                         printf("该股票累计欠%d股\n",pool[stock_id].owe_volumn);
                         printf("按回车键继续");
                         fflush(stdout);
@@ -181,7 +218,6 @@ void game(int timelimit,int per){
             resPer = per;
             //刷新和计算
             for(int i=0;i<5;i++){//随机刷新股票价格
-                srand(time(NULL));
                 double change_rate=(rand()%100-50)/1000.0;//涨跌幅
                 double new_price=pool[i].current_price*(1+change_rate);
                 if(new_price<1.0){
@@ -195,20 +231,21 @@ void game(int timelimit,int per){
         if(resTime == 0){
             //结算
             printf("游戏结束\n");
-            printf("现金余额:%d元\n",money);
-            printf("欠款+欠股票:%d元\n",debt+TotalUnpaidShares);
-            int final_value=money-debt+pool[0].have_value+pool[1].have_value+pool[2].have_value+pool[3].have_value+pool[4].have_value;//最终总资产(不含欠股票)
+            printf("现金余额:%.2f元\n",money);
+            printf("欠款+欠股票:%.2f元\n",debt+TotalUnpaidShares);
+            
+            double final_value=money-debt+pool[0].have_value+pool[1].have_value+pool[2].have_value+pool[3].have_value+pool[4].have_value-TotalUnpaidShares;//最终总资产(含欠股票抵扣)
             //还得还股票的价值
-            printf("最终总资产:%d元，减去初始的10000元，",final_value);
-            final_value-=10000;
+            printf("最终总资产:%.2f元，减去初始的10000元，",final_value);
+            final_value-=10000.0;
             if (final_value>0) {
-                printf("你获得了%d元的利润\n",final_value);
+                printf("你获得了%.2f元的利润\n",final_value);
             }
             else if (final_value==0) {
                 printf("你没有获得利润或亏损\n");
             }
             else {
-                printf("你亏损了%d元\n",-final_value);
+                printf("你亏损了%.2f元\n",-final_value);
             }
             //存储游戏记录(未完成)
             saveCurrentGamedata(final_value);
