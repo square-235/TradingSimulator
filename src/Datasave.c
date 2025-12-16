@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <time.h>
 #include <unistd.h>
-#include <stdlib.h>
 
 //结构体
 #define MAX_REC 100  
@@ -67,12 +66,25 @@ void parseFile (const char* filename) {
         recs[rec_cnt++].profit = getProfit(buf);
     }
 
-    // 冒泡排序 
-    bubbleSort(recs, rec_cnt);
-    for (int i=0; i<rec_cnt; i++) printf("%s", recs[i].line);
+   
+    char choice = 'q'; // 默认不排序
+    if (rec_cnt > 0) {
+        printf("\n请选择操作：1-按盈亏降序排序  q-直接返回（不排序）：");
+        scanf("%c", &choice);
+        // 按1则执行排序
+        if (choice == '1') {
+            bubbleSort(recs, rec_cnt);
+            printf("\n===== 排序后的历史记录 =====\n");
+        } else {
+            printf("\n===== 原始历史记录 =====\n");
+        }
+        // 打印记录
+        for (int i=0; i<rec_cnt; i++) printf("%s", recs[i].line);
+    }
 
     printf("\n按回车返回...");
-    getchar();
+    getchar(); /
+    getchar(); 
     fclose(fp);
 }
 
@@ -85,7 +97,7 @@ void saveCurrentGamedata(int final_value) {
 
     // 书写保存数据文件
     
-    //写入时间区分记录
+    //写入时间区分记录（方法来自网络）
     time_t rawtime;
     struct tm *info;
     char buffer[80];
@@ -96,11 +108,7 @@ void saveCurrentGamedata(int final_value) {
     fprintf(fp, "%s", buffer);
 
     // 写入数据
-    fprintf(fp, "盈亏:");
-    if(final_value > 0){
-        fprintf(fp, "+");
-    }
-    fprintf(fp, "%d元\n", final_value);
+    fprintf(fp, "盈亏:%d元\n", final_value);
     
     fclose(fp);
 }
