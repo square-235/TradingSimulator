@@ -15,8 +15,8 @@ void game(int timelimit,int per){
     int id_input;
     int num_input;
     //新增定投的变量
-    
-
+    int auto_invest = 0;//0关闭，1开启
+    int auto_invest_amount = 500;//每次头的资金，可改
     Stock pool[5];
         srand(time(NULL));
     for(int i=0;i<5;i++){
