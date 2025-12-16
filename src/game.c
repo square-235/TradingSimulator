@@ -170,6 +170,9 @@ void game(int timelimit,int per){
                         getchar();
                     }
                     break;
+                case '5':
+                    money+=job();//打工（单独拆分的模块）
+                    break;
                 case '6'://定投
                     if (auto_invest == 0) {
                         if (money >= auto_invest_amount) {
@@ -185,9 +188,6 @@ void game(int timelimit,int per){
                     printf("按回车继续");
                     fflush(stdout);
                     getchar();
-                    break;
-                case '5':
-                    money+=job();//打工（单独拆分的模块）
                     break;
                 case 'q':
                     resTime=1;//计时=1准备结算
