@@ -34,7 +34,7 @@ int job(){
       printf("\n题目：%d%c%d=", num1, op, num2);
       fflush(stdout);
       int userAnswer;
-      FD_ZERO(&set); // 限时输入代码（复用的）
+      FD_ZERO(&set); // 限时输入代码
       FD_SET(0, &set);
       timeout.tv_sec = 5;
       timeout.tv_usec = 0;

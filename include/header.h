@@ -1,7 +1,7 @@
 #ifndef INCLUDE_H
 #define INCLUDE_H
 
-// 控制台光标控制宏(来自网络)
+// 控制台光标控制宏
 // 清除屏幕
 #define CLEAR() printf("\033[2J")
 // 定位光标
