@@ -4,7 +4,6 @@
 #include <errno.h>
 #include <assert.h>
 #include <time.h>
-#include <unistd.h>
 
 //结构体
 #define MAX_REC 100  
@@ -111,4 +110,5 @@ void saveCurrentGamedata(int final_value) {
     fprintf(fp, "盈亏:%d元\n", final_value);
     
     fclose(fp);
+
 }
