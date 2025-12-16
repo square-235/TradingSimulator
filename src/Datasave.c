@@ -5,11 +5,40 @@
 #include <assert.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdlib.h>
+
+//结构体
+#define MAX_REC 100  
+// 最大记录数
+typedef struct {
+    char line[BUFSIZ];  
+    // 每行原始内容
+    int profit;         
+    // 盈亏值
+} Rec;
+
+// 盈亏值
+static int getProfit(const char* s) {
+    const char* p = strstr(s, "盈亏:");
+    return p ? atoi(p+3) : 0;
+}
+
+// 冒泡排序
+static void bubbleSort(Rec recs[], int n) {
+    for (int i=0; i<n-1; i++)
+        for (int j=0; j<n-1-i; j++)
+            if (recs[j].profit < recs[j+1].profit)
+            // 降序交换
+             { 
+                Rec t = recs[j];
+                recs[j] = recs[j+1];
+                recs[j+1] = t;
+            }
+}
 
 // 解析data文件
 void parseFile (const char* filename) {
     getchar();
-    // open the file
     FILE* fp = fopen(filename, "r");
     // 如果失败，输出失败原因
     if (!fp) {
