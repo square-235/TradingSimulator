@@ -14,9 +14,10 @@ void game(int timelimit,int per){
     int TotalUnpaidShares = 0;//总欠股票资产计数
     int id_input;
     int num_input;
-    //新增定投的变量
+    //定义智能投资相关变量
     int auto_invest = 0;//0关闭，1开启
-    int auto_invest_amount = 500;//每次头的资金，可改
+    int auto_invest_amount = 500;//每次智能投资的资金
+    //创建结构体
     Stock pool[5];
         srand(time(NULL));
     for(int i=0;i<5;i++){
@@ -79,10 +80,21 @@ void game(int timelimit,int per){
                     }
                     break;
                 case '2'://卖出
-                    printf("\n输入要卖出的id:");
+                    printf("\n输入要卖出的id（输入0全卖出）:");
                     scanf("%d",&id_input);
                     id_input--;//将id转换为数组下标
-                    if (id_input<0 || id_input>4) {
+                    if (id_input==-1) {//全卖出
+                        for (int i=0;i<5;i++) {
+                            if (pool[i].have_volumn>0) {
+                                num_input=pool[i].have_volumn;//用num_input暂存
+                                money+=pool[i].current_price*num_input;
+                                pool[i].have_volumn-=num_input;
+                                pool[i].have_value=pool[i].current_price*pool[i].have_volumn;
+                            }
+                        }
+                        continue;
+                    }
+                    else if (id_input<-1 || id_input>4) {
                         printf("\n输入id错误");
                         fflush(stdout);
                         sleep(1);
@@ -173,31 +185,46 @@ void game(int timelimit,int per){
                 case '5':
                     money+=job();//打工（单独拆分的模块）
                     break;
-                case '6'://定投
+                case '6'://智能投资
+                    getchar();
                     if (auto_invest == 0) {
                         if (money >= auto_invest_amount) {
-                            auto_invest = 1;
-                            printf("\n定投已开启，每次刷新将自动投入500元\n");
+                            printf("\n智能投资：每次刷新将自动把500元平均投入到5只股票（四舍五入）,资金不足自动关闭，无需手动操作，是否开启？(Y/n)");
+                            char confirm;
+                            scanf("%c",&confirm);
+                            if(confirm=='Y'||confirm=='\n'){
+                                auto_invest = 1;
+                                printf("\n智能投资已开启，");
+                            }
+                            else{
+                                printf("未进行更改，");
+                            }
                         }else{
-                            printf("\n资金不足，无法开启定投\n");
+                            printf("\n资金不足，无法开启，\n");
                         }
                     }else{
-                        auto_invest = 0;
-                        printf("\n定投已关闭\n");
+                        printf("关闭智能投资？(Y/n)");
+                        char confirm;
+                        scanf("%c",&confirm);
+                        if(confirm=='Y'||confirm=='\n'){
+                            auto_invest = 0;
+                            printf("\n智能投资已关闭,");
+                        }
                     }
-                    printf("按回车继续");
+                    printf("按回车键继续......");
+                    sleep(1);
                     fflush(stdout);
                     getchar();
                     break;
                 case 'q':
-                    resTime=1;//计时=1准备结算
+                    resTime=1;//计时=1以跳转到结算
                     break;
             }
         }
         resTime--;resPer--;
         if(resPer == 0){
             resPer = per;
-            if (auto_invest == 1) {
+            if (auto_invest == 1) {//智能投资
                 if (money >= auto_invest_amount) {//看资金够不够
                     int invest_per_stock = auto_invest_amount / 5;//均分资金
                     for (int i = 0; i < 5; i++) {
@@ -208,10 +235,8 @@ void game(int timelimit,int per){
                             money -= can_buy * pool[i].current_price;
                         }
                     }
-                    printf("\n已自动投资500元\n");
                 }else{
-                    auto_invest = 0;//资金不足自己关闭
-                    printf("\n资金不足，定投已关闭\n");
+                    auto_invest = 0;//资金不足自动关闭智能投资
                 }
             }
             //刷新和计算

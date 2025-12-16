@@ -85,7 +85,7 @@ void saveCurrentGamedata(int final_value) {
 
     // 书写保存数据文件
     
-    //写入时间区分记录（方法来自网络）
+    //写入时间区分记录
     time_t rawtime;
     struct tm *info;
     char buffer[80];
@@ -99,9 +99,6 @@ void saveCurrentGamedata(int final_value) {
     fprintf(fp, "盈亏:");
     if(final_value > 0){
         fprintf(fp, "+");
-    }
-    if(final_value < 0){
-        fprintf(fp, "-");
     }
     fprintf(fp, "%d元\n", final_value);
     
