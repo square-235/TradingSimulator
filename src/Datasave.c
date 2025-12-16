@@ -54,7 +54,14 @@ void saveCurrentGamedata(int final_value) {
     fprintf(fp, "%s", buffer);
 
     // 写入数据
-    fprintf(fp, "盈亏:%d元\n", final_value);
+    fprintf(fp, "盈亏:");
+    if(final_value > 0){
+        fprintf(fp, "+");
+    }
+    if(final_value < 0){
+        fprintf(fp, "-");
+    }
+    fprintf(fp, "%d元\n", final_value);
     
     fclose(fp);
 }
