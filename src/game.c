@@ -14,7 +14,9 @@ void game(int timelimit,int per){
     double TotalUnpaidShares = 0.0;//总欠股票资产计数 
     int id_input;
     int num_input;
-
+    //新增定投的变量
+    int auto_invest = 0;//0关闭，1开启
+    int auto_invest_amount = 500;//每次头的资金，可改
     Stock pool[5];
     srand(time(NULL)); 
     for(int i=0;i<5;i++){
@@ -208,6 +210,22 @@ void game(int timelimit,int per){
                 case '5':
                     money+=job();//打工（单独拆分的模块）
                     break;
+                case '6'://定投
+                    if (auto_invest == 0) {
+                        if (money >= auto_invest_amount) {
+                            auto_invest = 1;
+                            printf("\n定投已开启，每次刷新将自动投入500元\n");
+                        }else{
+                            printf("\n资金不足，无法开启定投\n");
+                        }
+                    }else{
+                        auto_invest = 0;
+                        printf("\n定投已关闭\n");
+                    }
+                    printf("按回车继续");
+                    fflush(stdout);
+                    getchar();
+                    break;
                 case 'q':
                     resTime=1;//计时=1准备结算
                     break;
@@ -216,6 +234,23 @@ void game(int timelimit,int per){
         resTime--;resPer--;
         if(resPer == 0){
             resPer = per;
+            if (auto_invest == 1) {
+                if (money >= auto_invest_amount) {//看资金够不够
+                    int invest_per_stock = auto_invest_amount / 5;//均分资金
+                    for (int i = 0; i < 5; i++) {
+                        int can_buy = (int)(invest_per_stock / pool[i].current_price);//计算每股买多少
+                        if (can_buy > 0) {
+                            pool[i].have_volumn += can_buy;
+                            pool[i].have_value += can_buy * pool[i].current_price;
+                            money -= can_buy * pool[i].current_price;
+                        }
+                    }
+                    printf("\n已自动投资500元\n");
+                }else{
+                    auto_invest = 0;//资金不足自己关闭
+                    printf("\n资金不足，定投已关闭\n");
+                }
+            }
             //刷新和计算
             for(int i=0;i<5;i++){//随机刷新股票价格
                 double change_rate=(rand()%100-50)/1000.0;//涨跌幅
